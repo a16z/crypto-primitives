@@ -64,6 +64,39 @@ pub trait PoseidonDefaultConfigField: PrimeField {
         optimized_for_weights: bool,
     ) -> Option<PoseidonConfig<Self>>;
 }
+/// Internal function that uses the `PoseidonDefaultConfig` to compute the Poseidon parameters.
+pub fn get_poseidon_parameters<F: PrimeField>(
+    rate: usize,
+    param: PoseidonDefaultConfigEntry,
+) -> Option<PoseidonConfig<F>> {
+    // let params_set = if !optimized_for_weights {
+    //     P::PARAMS_OPT_FOR_CONSTRAINTS
+    // } else {
+    //     P::PARAMS_OPT_FOR_WEIGHTS
+    // };
+
+    if param.rate == rate {
+        let (ark, mds) = find_poseidon_ark_and_mds::<F>(
+            F::MODULUS_BIT_SIZE as u64,
+            rate,
+            param.full_rounds as u64,
+            param.partial_rounds as u64,
+            param.skip_matrices as u64,
+        );
+
+        return Some(PoseidonConfig {
+            full_rounds: param.full_rounds,
+            partial_rounds: param.partial_rounds,
+            alpha: param.alpha as u64,
+            ark,
+            mds,
+            rate: param.rate,
+            capacity: 1,
+        });
+    }
+
+    None
+}
 
 /// Internal function that uses the `PoseidonDefaultConfig` to compute the Poseidon parameters.
 pub fn get_default_poseidon_parameters_internal<P: PoseidonDefaultConfig<N>, const N: usize>(
