@@ -95,7 +95,7 @@ impl<F: PrimeField> PoseidonSponge<F> {
         state.clone_from_slice(&new_state[..state.len()])
     }
 
-    fn permute(&mut self) {
+    pub fn permute(&mut self) {
         let full_rounds_over_2 = self.parameters.full_rounds / 2;
         let mut state = self.state.clone();
         for i in 0..full_rounds_over_2 {
@@ -121,7 +121,7 @@ impl<F: PrimeField> PoseidonSponge<F> {
     }
 
     // Absorbs everything in elements, this does not end in an absorbtion.
-    fn absorb_internal(&mut self, mut rate_start_index: usize, elements: &[F]) {
+    pub fn absorb_internal(&mut self, mut rate_start_index: usize, elements: &[F]) {
         let mut remaining_elements = elements;
 
         loop {
